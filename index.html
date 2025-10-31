@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Happy Birthday — Meghu 💖</title>
+
+    <!-- Fonts & libs -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="tsparticles"></div>
+
+    <!-- LOADER + MUSIC -->
+    <div id="loader">
+        <h2>Just a sec — surprise for Meghu 💝</h2>
+        <p>Playing a sweet tune... Tap the music icon to mute/unmute.</p>
+    </div>
+
+    <div class="topbar">
+        <div class="left-controls">
+            <button id="diaryBtn" class="btn">Open Diary</button>
+            <button id="addEntry" class="btn mini">Add entry</button>
+        </div>
+        <div>
+            <button id="musicBtn" class="btn">🎵</button>
+            <button id="helpBtn" class="btn">?</button>
+        </div>
+    </div>
+
+    <main class="app" role="main">
+        <section class="left">
+            <h1 class="title">Happy Birthday, Meghu 💖</h1>
+            <div class="sub">To the one who lights my life</div>
+            <p class="desc">I made this page for you — press the buttons, play, and enjoy. Everything is on this page: a
+                tiny heart, playful questions, confetti, and our diary. You can add or duplicate diary entries with
+                images and captions.</p>
+
+            <div class="actions">
+                <button id="askLove" class="btn btn-primary">Open your surprise</button>
+                <button id="revealNote" class="btn">Read a secret note</button>
+            </div>
+
+            <div class="hint">Tip: If the "No" button tries to escape — chase it 😄</div>
+        </section>
+
+        <aside class="right">
+            <div class="heart-wrap">
+                <div id="heart" class="heart" title="You're my heart">
+                    <div
+                        style="position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50px;opacity:.12;background:linear-gradient(90deg,#fff,transparent)">
+                    </div>
+                </div>
+            </div>
+            <div class="hint">Tap "Open your surprise" for the big question.</div>
+        </aside>
+    </main>
+
+    <!-- Diary full-screen SPA panel -->
+    <section id="diaryPanel" class="diary-panel" aria-hidden="true">
+        <div class="diary-header">
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="font-family:'Great Vibes',cursive;font-size:28px;color:var(--accent)">Our Diary — Meghu & Me
+                </div>
+                <div style="color:rgba(230,238,246,0.7)">Flip through our moments</div>
+            </div>
+            <div>
+                <button id="closeDiary" class="btn mini">Close</button>
+            </div>
+        </div>
+
+        <div class="diary-body">
+            <div class="diary">
+
+                <!-- Template entry (duplicate this element programmatically) -->
+                <article class="entry" data-id="entry-1">
+                    <img class="photo" src="images/her1.jpg" alt="her smile">
+                    <div class="cap">The day I first saw your smile — I melted 🌸</div>
+                    <div class="entry-controls">
+                        <button class="btn mini clone">Duplicate</button>
+                        <button class="btn mini remove">Remove</button>
+                        <button class="btn mini edit">Edit caption</button>
+                    </div>
+                </article>
+
+                <article class="entry" data-id="entry-2">
+                    <img class="photo" src="images/us1.jpg" alt="our moment">
+                    <div class="cap">Little silly adventures together ✨</div>
+                    <div class="entry-controls">
+                        <button class="btn mini clone">Duplicate</button>
+                        <button class="btn mini remove">Remove</button>
+                        <button class="btn mini edit">Edit caption</button>
+                    </div>
+                </article>
+
+                <!-- more prefilled entries -->
+
+            </div>
+            <div class="credits">Tip: To change pictures, replace the <code>src</code> in each &lt;img&gt; tag with your
+                image paths. You can also use the "Add entry" button on the top-left.</div>
+        </div>
+    </section>
+
+    <!-- background music (replace 'your-music.mp3' with your file) -->
+    <audio id="bgAudio" loop preload="auto">
+        <source src="music/hello.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /* ------------------- Particles ------------------- */
+        tsParticles.load('tsparticles', {
+            fullScreen: { enable: false },
+            fpsLimit: 60,
+            particles: {
+                number: { value: 60 },
+                color: { value: ['#ff6aa1', '#7ef1f5', '#ffd27e'] },
+                shape: { type: 'circle' },
+                opacity: { value: 0.7, random: { enable: true, minimumValue: 0.2 } },
+                size: { value: { min: 1, max: 6 } },
+                move: { enable: true, speed: 0.9, outModes: { default: 'out' } },
+                links: { enable: true, distance: 120, color: '#5effff', opacity: 0.06, width: 1 }
+            },
+            interactivity: { detectsOn: 'canvas', events: { onHover: { enable: true, mode: 'repulse' }, onClick: { enable: true, mode: 'push' } }, modes: { push: { quantity: 4 }, repulse: { distance: 80 } } },
+            detectRetina: true,
+            background: { color: 'transparent' }
+        });
+
+        /* ------------------- Loader & initial music start ------------------- */
+        const loader = document.getElementById('loader');
+        const bgAudio = document.getElementById('bgAudio');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loader.style.transition = 'opacity 0.9s'; loader.style.opacity = '0'; setTimeout(() => loader.remove(), 900);
+                gsap.to('.app', { opacity: 1, duration: 1.2 });
+                try { bgAudio.play().then(() => { isPlaying = true; musicBtn.textContent = '🔇'; }).catch(() => { /* autoplay blocked */ musicBtn.textContent = '🎵'; }); } catch (e) { musicBtn.textContent = '🎵'; }
+                // small celebratory confetti
+                setTimeout(() => { confetti({ particleCount: 100, spread: 140, origin: { y: 0.6 } }); }, 1200);
+            }, 1100);
+        });
+
+        musicBtn.addEventListener('click', () => {
+            if (!isPlaying) { bgAudio.play(); isPlaying = true; musicBtn.textContent = '🔇'; }
+            else { bgAudio.pause(); isPlaying = false; musicBtn.textContent = '🎵'; }
+        });
+
+        /* ------------------- Heart pulse ------------------- */
+        const heart = document.getElementById('heart');
+        gsap.fromTo(heart, { scale: 0.96 }, { scale: 1.06, duration: 1.1, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+        /* ------------------- Main interactions (SweetAlert) ------------------- */
+        const askBtn = document.getElementById('askLove');
+        askBtn.addEventListener('click', async () => {
+            const result = await Swal.fire({ title: 'Quick question...💓', text: 'Do you love me?', showCancelButton: true, confirmButtonText: 'Yes, obviously!', cancelButtonText: 'No...' });
+            if (result.isConfirmed) { celebrate(); await Swal.fire({ title: 'YAY! 😍', html: 'I love you forever. -> <b>Happy Birthday, Meghu!</b>', confirmButtonText: 'Aww' }); }
+            else if (result.dismiss === Swal.DismissReason.cancel) { await playfulNo(); }
+        });
+
+        async function playfulNo() {
+            await Swal.fire({
+                title: 'Are you sure?', html: `<div style="display:flex;gap:12px;justify-content:center;margin-top:14px"><button id="yesBtn" class="swal2-confirm swal2-styled" style="margin:0">Yes</button><button id="noBtn" class="swal2-cancel swal2-styled" style="margin:0">No</button></div>`, showConfirmButton: false, didOpen: () => {
+                    const no = Swal.getPopup().querySelector('#noBtn'); const yes = Swal.getPopup().querySelector('#yesBtn'); let moves = 0;
+                    no.addEventListener('mouseenter', () => { if (moves < 8) { const x = (Math.random() * 140) - 70; const y = (Math.random() * 80) - 40; no.style.transform = `translate(${x}px,${y}px)`; } else { no.textContent = 'Okay... (just kidding)'; no.style.transform = 'none'; } moves++; });
+                    yes.addEventListener('click', () => { Swal.close(); celebrate(); Swal.fire('You made me the happiest!', 'Love you 💖', 'success'); });
+                }
+            });
+        }
+
+        function celebrate() {
+            confetti({ particleCount: 140, spread: 160, origin: { y: 0.6 } });
+            gsap.fromTo(heart, { scale: 1 }, { scale: 1.18, duration: 0.35, yoyo: true, repeat: 3, ease: 'elastic.out(1,0.6)' });
+            playMelody();
+            // temporary particle energy
+            const item = tsParticles.domItem(0); if (item) { item.options.particles.move.speed = 2.2; item.refresh(); setTimeout(() => { item.options.particles.move.speed = 0.9; item.refresh(); }, 4000); }
+        }
+
+        /* small melody for celebration */
+        function playMelody() { try { const ac = new (window.AudioContext || window.webkitAudioContext)(); const now = ac.currentTime; const notes = [440, 660, 880, 660, 440]; notes.forEach((n, i) => { const o = ac.createOscillator(); const g = ac.createGain(); o.type = 'sine'; o.frequency.value = n; g.gain.setValueAtTime(0.0001, now + i * 0.22); g.gain.exponentialRampToValueAtTime(0.12, now + i * 0.22 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.22 + 0.18); o.connect(g); g.connect(ac.destination); o.start(now + i * 0.22); o.stop(now + i * 0.22 + 0.22); }); } catch (e) { /* ignore */ } }
+
+        /* ------------------- Secret note ------------------- */
+        document.getElementById('revealNote').addEventListener('click', () => {
+            Swal.fire({ title: 'A little secret', html: `<div style="text-align:left;line-height:1.5"> <p>My dearest Meghu,</p> <p>Every day with you feels like a new song — warm, silly and full of sparkles. I love how you laugh, how you think, and that your hand fits perfectly in mine.</p> <p><b>Happy Birthday!</b> Here's to more late-night talks, tiny adventures, and all the dreams we'll chase together.</p> <p style="margin-top:8px">— <i>Forever yours</i></p> </div>`, confirmButtonText: 'Kiss 😘' });
+        });
+
+        /* ------------------- Diary SPA behavior ------------------- */
+        const diaryBtn = document.getElementById('diaryBtn');
+        const diaryPanel = document.getElementById('diaryPanel');
+        const closeDiary = document.getElementById('closeDiary');
+        diaryBtn.addEventListener('click', () => { diaryPanel.classList.add('open'); diaryPanel.setAttribute('aria-hidden', 'false'); });
+        closeDiary.addEventListener('click', () => { diaryPanel.classList.remove('open'); diaryPanel.setAttribute('aria-hidden', 'true'); });
+
+        // Add entry button (top-left) — it clones the template entry and inserts at top
+        const addEntry = document.getElementById('addEntry');
+        addEntry.addEventListener('click', () => {
+            const diary = document.querySelector('.diary'); const template = diary.querySelector('.entry'); if (!template) return; const clone = template.cloneNode(true); // clear image src + caption for easy editing
+            const idx = Date.now(); clone.dataset.id = 'entry-' + idx; clone.querySelector('.photo').src = 'images/replace-me.jpg'; clone.querySelector('.cap').textContent = 'New moment — add your caption'; diary.prepend(clone); attachControls(clone); // open diary so she sees it
+            diaryPanel.classList.add('open'); diaryPanel.setAttribute('aria-hidden', 'false');
+        });
+
+        // Attach event handlers to existing controls
+        function attachControls(entry) {
+            const cloneBtn = entry.querySelector('.clone'); const remBtn = entry.querySelector('.remove'); const editBtn = entry.querySelector('.edit');
+            cloneBtn.addEventListener('click', () => { const copy = entry.cloneNode(true); copy.dataset.id = 'entry-' + Date.now(); attachControls(copy); entry.parentElement.insertBefore(copy, entry.nextSibling); });
+            remBtn.addEventListener('click', () => { if (confirm('Remove this entry?')) entry.remove(); });
+            editBtn.addEventListener('click', () => { const newCap = prompt('Edit caption:', entry.querySelector('.cap').textContent); if (newCap !== null) entry.querySelector('.cap').textContent = newCap; const newImg = prompt('Change image URL (leave blank to keep):', entry.querySelector('.photo').src); if (newImg) entry.querySelector('.photo').src = newImg; });
+        }
+
+        document.querySelectorAll('.entry').forEach(e => attachControls(e));
+
+        /* keyboard accessibility: Esc closes diary */
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { diaryPanel.classList.remove('open'); diaryPanel.setAttribute('aria-hidden', 'true'); } });
+
+        /* tiny help */
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            Swal.fire({ title: 'How to use', html: `<ul style="text-align:left"><li>Use the <b>Open Diary</b> button to view full-screen diary.</li><li>Click <b>Add entry</b> to add a new slot (replace image src with your image path).</li><li>Use <b>Duplicate</b> to copy an entry, <b>Edit</b> to change caption or image, and <b>Remove</b> to delete.</li><li>Music plays automatically if allowed; use the music button to mute/unmute.</li></ul>` });
+        });
+
+        /* ensure audio continues while diary is open (we simply don't pause it) */
+
+        /* small accessibility: focus trap when diary open (simple) */
+        diaryPanel.addEventListener('transitionend', () => { if (diaryPanel.classList.contains('open')) diaryPanel.querySelector('.diary').focus(); });
+
+    </script>
+</body>
+
+</html>
